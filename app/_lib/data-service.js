@@ -1,3 +1,5 @@
+//CACHEING
+// import { unstable_noStore as noStore } from "next/cache";
 import { eachDayOfInterval } from "date-fns";
 import { supabase } from "./supabase";
 import { notFound } from "next/navigation";
@@ -36,6 +38,9 @@ export async function getCabinPrice(id) {
 }
 
 export const getCabins = async function () {
+  //CACHEING
+  // THAT'S FOR PPR WHICH MAKE THE FIRST PART STATIC AND CABIN LIST DYNAMIC
+  // noStore();
   const { data, error } = await supabase
     .from("cabins")
     .select("id, name, maxCapacity, regularPrice, discount, image")
