@@ -3,7 +3,7 @@ import CabinsList from "../_components/CabinsList";
 import Spinner from "../_components/Spinner";
 import Filter from "../_components/Filter";
 
-export const revalidate = 15;
+// export const revalidate = 15;
 export const metadata = {
   title: "Cabins",
 };

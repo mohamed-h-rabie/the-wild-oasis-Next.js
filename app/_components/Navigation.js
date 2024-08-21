@@ -30,7 +30,7 @@ export default async function Navigation() {
           >
             {session?.user && (
               <img
-                src={session.user.image}
+                src={session?.user?.image ? session?.user?.image : null}
                 className="h-8 rounded-full"
                 alt="user-inage"
               />
