@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { auth, signIn, signOut } from "./auth";
 import { supabase } from "./supabase";
 import { getBookings } from "./data-service";
-
+import { redirect } from "next/navigation";
 export async function signinAction() {
   await signIn("google", {
     redirectTo: "/account",
@@ -43,4 +43,33 @@ export async function deleteReservarion(bookingId) {
 
   if (error) throw new Error("Booking could not be deleted");
   revalidatePath("/account/reservations");
+}
+export async function updateReservation(formData) {
+  const session = await auth();
+  if (!session) throw new Error("please Login first");
+  const bookingId = +formData.get("id");
+
+  const guestBookings = await getBookings(session?.user.guestId);
+  const guestBookingsIds = guestBookings.map((booking) => booking.id);
+  if (!guestBookingsIds.includes(bookingId))
+    throw new Error("you are not allowed to delete this booking");
+
+  const updatedData = {
+    numGuests: formData.get("numGuests"),
+    observations: formData.get("observations").slice(0, 100),
+  };
+  const { error } = await supabase
+    .from("bookings")
+    .update(updatedData)
+    .eq("id", bookingId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Booking could not be updated");
+  }
+  revalidatePath(`/account/reservations/edit/${bookingId}`);
+  revalidatePath(`/account/reservations`);
+  redirect("/account/reservations");
 }
