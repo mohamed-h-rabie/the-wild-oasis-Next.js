@@ -4,10 +4,8 @@ import Navigation from "./_components/Navigation";
 
 import "@/app/_styles/globals.css";
 import { Josefin_Sans } from "next/font/google";
-import {
-  ReservationProvider,
-  ResverationProvider,
-} from "./_components/ReservationContext";
+import { ReservationProvider } from "./_components/ReservationContext";
+
 const josefin = Josefin_Sans({
   subsets: ["latin"],
   display: "swap",

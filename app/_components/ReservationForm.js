@@ -1,11 +1,26 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { differenceInDays } from "date-fns";
 import { useReservation } from "./ReservationContext";
+import { createReservation } from "../_lib/action";
+import { createBooking } from "../_lib/data-service";
+import SubmitButton from "./SubmitButton";
 
 function ReservationForm({ cabin, user }) {
   const { range } = useReservation();
-  const { maxCapacity } = cabin;
-  console.log(range);
+  const { maxCapacity, regularPrice, discount, id: cabinId } = cabin;
+  let now = new Date(new Date().setDate(new Date().getDate() + 2));
+  let startDate = now.toISOString().slice(0, 19).replace("T", " ");
+
+  // Date and time 5 days from now
+  let fiveDaysLater = new Date(new Date().setDate(new Date().getDate() + 10));
+  let endDate = fiveDaysLater.toISOString().slice(0, 19).replace("T", " ");
+  const numNights = differenceInDays(endDate, startDate);
+  const cabinPrice = numNights * (regularPrice - discount);
+  console.log(cabinId);
+  const bookingData = { startDate, endDate, numNights, cabinPrice, cabinId };
+  const createbookingwithdata = createReservation.bind(null, bookingData);
   return (
     <div className="scale-[1.01]">
       <div className="bg-primary-800 text-primary-300 px-16 py-2 flex justify-between items-center">
@@ -25,7 +40,10 @@ function ReservationForm({ cabin, user }) {
         )}
       </div>
 
-      <form className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col">
+      <form
+        action={createbookingwithdata}
+        className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col"
+      >
         <div className="space-y-2">
           <label htmlFor="numGuests">How many guests?</label>
           <select
@@ -60,9 +78,10 @@ function ReservationForm({ cabin, user }) {
         <div className="flex justify-end items-center gap-6">
           <p className="text-primary-300 text-base">Start by selecting dates</p>
 
-          <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
+          {/* <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
             Reserve now
-          </button>
+          </button> */}
+          <SubmitButton>Reserve now</SubmitButton>
         </div>
       </form>
     </div>
